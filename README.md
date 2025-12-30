@@ -1,4 +1,4 @@
-# sync-pihole-custom-list
+# Pi-Hole custom.list Synchronizer
 
 Small shell script to fetch and synchronize custom blocklists for Pi-hole.
 
