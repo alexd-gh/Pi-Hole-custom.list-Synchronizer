@@ -1,12 +1,12 @@
 # Pi-Hole custom.list Synchronizer
 
-Small shell script to fetch and synchronize custom blocklists for Pi-hole.
+Small shell script to fetch and synchronize custom DNS lists for Pi-hole.
 
 ## Repository
 
 This repository contains a single script:
 
-- `sync-from-web.sh` — fetches remote blocklists and updates local Pi-hole custom lists.
+- `sync-from-web.sh` — fetches remote custom.list and updates local Pi-hole custom.list file.
 
 ## Requirements
 
