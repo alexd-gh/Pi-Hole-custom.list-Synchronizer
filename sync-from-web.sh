@@ -12,6 +12,14 @@ SOURCE_URL="http://${PRIMARY_PIHOLE_HOST}/custom.list"
 DEST_FILE="/etc/pihole/custom.list"
 TEMP_FILE="/tmp/custom.list.download"
 
+# --- Message Variables ---
+ERR_NO_TOOL="Error: Neither wget nor curl is installed. Please install one of them."
+MSG_CHANGE_DETECTED="Change detected. Updating local custom.list."
+MSG_DNS_RESTARTED="DNS service restarted successfully."
+MSG_NO_CHANGES="No changes detected in custom.list."
+ERR_DOWNLOAD_FAILED="Failed to download custom.list from ${PRIMARY_PIHOLE_HOST}."
+LOG_TAG="Pi-Hole Custom DNS Synchronizer"
+
 # 1. Download the file from the primary server's web page.
 #    Try wget first (quiet mode), fall back to curl if wget is not available.
 if command -v wget &> /dev/null; then
@@ -19,7 +27,8 @@ if command -v wget &> /dev/null; then
 elif command -v curl &> /dev/null; then
     curl -s -o "$TEMP_FILE" "$SOURCE_URL"
 else
-    echo "Error: Neither wget nor curl is installed. Please install one of them."
+    echo "$ERR_NO_TOOL"
+    logger -t "$LOG_TAG" -p user.err "$ERR_NO_TOOL"
     exit 1
 fi
 
@@ -28,17 +37,23 @@ if [ $? -eq 0 ] && [ -s "$TEMP_FILE" ]; then
     # 3. Compare the new file with the existing one. The 'cmp' command is silent.
     #    Proceed only if the files are different.
     if ! cmp -s "$TEMP_FILE" "$DEST_FILE"; then
-        echo "Change detected on $(date). Updating local custom.list."
+        echo "$MSG_CHANGE_DETECTED"
+        logger -t "$LOG_TAG" "$MSG_CHANGE_DETECTED"
         # 4. Overwrite the old file with the new one. Sudo is needed for this.
         sudo mv "$TEMP_FILE" "$DEST_FILE"
         # 5. Restart the DNS service to apply the new list.
         sudo pihole restartdns
+        echo "$MSG_DNS_RESTARTED"
+        logger -t "$LOG_TAG" "$MSG_DNS_RESTARTED"
     else
         # Files are the same, no action needed. Just clean up the temp file.
+        echo "$MSG_NO_CHANGES"
+        logger -t "$LOG_TAG" "$MSG_NO_CHANGES"
         rm "$TEMP_FILE"
     fi
 else
-    echo "Failed to download custom.list from ${PRIMARY_PIHOLE_HOST} on $(date)."
+    echo "$ERR_DOWNLOAD_FAILED"
+    logger -t "$LOG_TAG" -p user.err "$ERR_DOWNLOAD_FAILED"
     # Clean up failed download if it exists
     [ -f "$TEMP_FILE" ] && rm "$TEMP_FILE"
 fi
