@@ -153,6 +153,7 @@ sudo tail -f /var/log/syslog | grep "Pi-Hole Custom DNS Synchronizer"
 - Suitable for Pi-hole multi-device setups with a primary and secondary instances
 - Ensure firewall rules allow HTTP access to the primary server on port 80
 - **All script activity is logged to syslog** with the tag "Pi-Hole Custom DNS Synchronizer" for monitoring and troubleshooting
+- **Security Note**: By default, the script runs as root when executed via crontab. For enhanced security, you can create a custom non-root user, configure specific `sudo` rules for the required commands (`mv`, `pihole restartdns`) using `sudoers`, and run the cron job with reduced privileges instead of full root access.
 
 ## License
 
