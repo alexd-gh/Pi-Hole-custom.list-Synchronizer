@@ -15,9 +15,9 @@ This repository contains a single script:
 
 ## How It Works
 
-The `sync-from-web.sh` script synchronizes custom DNS blocklist entries from a primary Pi-hole server to secondary Pi-hole instances. It:
+The `sync-from-web.sh` script synchronizes custom DNS entries from a primary Pi-hole server to secondary Pi-hole instances. It:
 
-1. **Downloads** the custom blocklist from the primary server via HTTP
+1. **Downloads** the custom.list file from the primary server via HTTP
 2. **Compares** the downloaded file with the local copy to detect changes
 3. **Updates** the local custom list only if differences are detected
 4. **Restarts** the DNS service to apply new rules
