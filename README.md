@@ -54,8 +54,8 @@ graph TD
     K --> L
     style A fill:#90EE90
     style K fill:#90EE90
-    style C fill:#FFB6C6
-    style F fill:#FFB6C6
+    style C fill:#FF0000,color:#fff
+    style F fill:#FF0000,color:#fff
 ```
 
 ## Why Use This Script?
