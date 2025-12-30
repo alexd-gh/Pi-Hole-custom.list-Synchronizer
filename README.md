@@ -36,6 +36,17 @@ The `sync-from-web.sh` script synchronizes custom DNS entries from a primary Pi-
 - If **no changes detected** or **download fails**:
   - Cleans up temporary files automatically
 
+## Why Use This Script?
+
+If you're running a small home lab with multiple Pi-hole instances, you likely need custom DNS entries to be resolvable across your entire local network. This script solves that problem by automatically synchronizing custom DNS lists from a primary Pi-hole server to secondary instances.
+
+**Key Benefits:**
+- **Centralized DNS Management**: Maintain your custom DNS entries in one place (primary Pi-hole) and automatically push them to all secondary servers
+- **Ad Blocking & Content Filtering**: Leverage Pi-hole's powerful blocklist capabilities to filter ads and malicious content without ISP restrictions
+- **Alternative DNS Providers**: Use DNS providers of your choice (Quad9, Cloudflare, OpenDNS, etc.) instead of being limited to your ISP's DNS servers
+- **Local Network Resolution**: Resolve custom hostnames and internal services across your home lab network seamlessly
+- **Automated Synchronization**: No more manual configuration on each Pi-hole instance—changes sync automatically via cron
+
 ## Setup Instructions
 
 ### 1. Symlink custom.list (on primary server)
