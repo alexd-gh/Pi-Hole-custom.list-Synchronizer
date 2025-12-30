@@ -36,6 +36,28 @@ The `sync-from-web.sh` script synchronizes custom DNS entries from a primary Pi-
 - If **no changes detected** or **download fails**:
   - Cleans up temporary files automatically
 
+```mermaid
+graph TD
+    A["Start Script"] --> B{"wget or curl<br/>available?"}
+    B -->|No| C["Error: Tool Not Found<br/>Exit 1"]
+    B -->|Yes| D["Download custom.list<br/>from Primary Server"]
+    D --> E{"Download<br/>Successful?"}
+    E -->|No| F["Log Error<br/>Cleanup Temp File<br/>Exit"]
+    E -->|Yes| G{"File Changed<br/>vs Local?"}
+    G -->|No Changes| H["Log: No Changes<br/>Cleanup Temp File<br/>Exit"]
+    G -->|Changes Detected| I["Replace Local File"]
+    I --> J["Restart DNS Service"]
+    J --> K["Log: Success<br/>Exit"]
+    C --> L["Log to Syslog"]
+    F --> L
+    H --> L
+    K --> L
+    style A fill:#90EE90
+    style K fill:#90EE90
+    style C fill:#FFB6C6
+    style F fill:#FFB6C6
+```
+
 ## Why Use This Script?
 
 If you're running a small home lab with multiple Pi-hole instances, you likely need custom DNS entries to be resolvable across your entire local network. This script solves that problem by automatically synchronizing custom DNS lists from a primary Pi-hole server to secondary instances.
@@ -46,6 +68,28 @@ If you're running a small home lab with multiple Pi-hole instances, you likely n
 - **Alternative DNS Providers**: Use DNS providers of your choice (Quad9, Cloudflare, OpenDNS, etc.) instead of being limited to your ISP's DNS servers
 - **Local Network Resolution**: Resolve custom hostnames and internal services across your home lab network seamlessly
 - **Automated Synchronization**: No more manual configuration on each Pi-hole instance—changes sync automatically via cron
+
+### Architecture & Data Flow
+
+```mermaid
+graph LR
+    A["📝 Admin<br/>Adds Custom<br/>DNS Entry"] -->|Edit custom.list| B["🔵 Primary Pi-hole<br/>Server"]
+    B -->|HTTP GET<br/>/custom.list| C["📂 Lighttpd<br/>Web Server<br/>/var/www/html/"]
+    C -->|custom.list<br/>File| D["🔄 Sync Script<br/>on Secondary"]
+    D -->|Compare &<br/>Update| E["🔵 Secondary<br/>Pi-hole #1"]
+    D -->|Compare &<br/>Update| F["🔵 Secondary<br/>Pi-hole #2"]
+    D -->|Compare &<br/>Update| G["🔵 Secondary<br/>Pi-hole #N"]
+    E -->|DNS Queries| H["🖥️ Local Network<br/>Clients"]
+    F -->|DNS Queries| H
+    G -->|DNS Queries| H
+    
+    style B fill:#4CAF50,color:#fff
+    style E fill:#2196F3,color:#fff
+    style F fill:#2196F3,color:#fff
+    style G fill:#2196F3,color:#fff
+    style D fill:#FF9800,color:#fff
+    style H fill:#9C27B0,color:#fff
+```
 
 ## Setup Instructions
 
