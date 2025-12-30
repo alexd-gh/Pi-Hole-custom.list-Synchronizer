@@ -118,6 +118,21 @@ To troubleshoot, run the script manually with output to see if it executes corre
 sudo /usr/local/bin/sync-from-web.sh
 ```
 
+### Checking Syslog Messages
+
+The script logs all activity to syslog. To view the messages:
+
+```bash
+# View recent syslog messages from the script
+sudo grep "Pi-Hole Custom DNS Synchronizer" /var/log/syslog
+
+# Or use journalctl for systemd-based systems
+sudo journalctl -t "Pi-Hole Custom DNS Synchronizer"
+
+# Follow logs in real-time
+sudo tail -f /var/log/syslog | grep "Pi-Hole Custom DNS Synchronizer"
+```
+
 ## Requirements
 
 - **Primary Server**: Bash and web server access to `/var/www/html/`
