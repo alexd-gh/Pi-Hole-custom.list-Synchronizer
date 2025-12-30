@@ -73,7 +73,9 @@ PRIMARY_PIHOLE_HOST="10.0.0.2"  # Change this to your primary Pi-hole
 
 ### 4. Create a cron job (optional but recommended)
 
-Run the script automatically every 15 minutes:
+Run the script automatically to sync changes from the primary server to secondary server(s). Any changes made to the custom.list on the primary Pi-hole server will be automatically applied to secondary servers when the cron job executes.
+
+Run the script every 15 minutes:
 
 ```bash
 # Create the crontab file if it doesn't exist
@@ -84,7 +86,7 @@ sudo chmod 600 /var/spool/cron/crontabs/root
 */15 * * * * /usr/local/bin/sync-from-web.sh >/dev/null 2>&1
 ```
 
-Or use `crontab -e` and add:
+To edit the crontab directly, use `crontab -e` and add:
 
 ```
 */15 * * * * /usr/local/bin/sync-from-web.sh >/dev/null 2>&1
