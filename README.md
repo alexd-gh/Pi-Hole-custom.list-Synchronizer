@@ -52,8 +52,8 @@ graph TD
     F --> L
     H --> L
     K --> L
-    style A fill:#90EE90
-    style K fill:#90EE90
+    style A fill:#228B22,color:#fff
+    style K fill:#228B22,color:#fff
     style C fill:#FF0000,color:#fff
     style F fill:#FF0000,color:#fff
 ```
