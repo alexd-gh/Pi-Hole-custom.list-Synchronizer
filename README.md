@@ -150,6 +150,7 @@ sudo tail -f /var/log/syslog | grep "Pi-Hole Custom DNS Synchronizer"
 - DNS service is only restarted if changes are detected (more efficient)
 - Suitable for Pi-hole multi-device setups with a primary and secondary instances
 - Ensure firewall rules allow HTTP access to the primary server on port 80
+- **All script activity is logged to syslog** with the tag "Pi-Hole Custom DNS Synchronizer" for monitoring and troubleshooting
 
 ## License
 
