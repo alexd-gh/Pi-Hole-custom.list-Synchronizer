@@ -18,6 +18,8 @@ MSG_CHANGE_DETECTED="Change detected. Updating local custom.list."
 MSG_DNS_RESTARTED="DNS service restarted successfully."
 MSG_NO_CHANGES="No changes detected in custom.list."
 ERR_DOWNLOAD_FAILED="Failed to download custom.list from ${PRIMARY_PIHOLE_HOST}."
+ERR_MOVE_FAILED="Failed to move downloaded file to destination."
+ERR_RESTART_FAILED="Failed to restart DNS service."
 LOG_TAG="Pi-Hole Custom DNS Synchronizer"
 
 # 1. Download the file from the primary server's web page.
@@ -36,13 +38,23 @@ fi
 if [ $? -eq 0 ] && [ -s "$TEMP_FILE" ]; then
     # 3. Compare the new file with the existing one. The 'cmp' command is silent.
     #    Proceed only if the files are different.
-    if ! cmp -s "$TEMP_FILE" "$DEST_FILE"; then
+    #    If destination file doesn't exist, files are different
+    if [ ! -f "$DEST_FILE" ] || ! cmp -s "$TEMP_FILE" "$DEST_FILE"; then
         echo "$MSG_CHANGE_DETECTED"
         logger -t "$LOG_TAG" "$MSG_CHANGE_DETECTED"
         # 4. Overwrite the old file with the new one. Sudo is needed for this.
-        sudo mv "$TEMP_FILE" "$DEST_FILE"
+        if ! sudo mv "$TEMP_FILE" "$DEST_FILE"; then
+            echo "$ERR_MOVE_FAILED"
+            logger -t "$LOG_TAG" -p user.err "$ERR_MOVE_FAILED"
+            rm "$TEMP_FILE"
+            exit 1
+        fi
         # 5. Restart the DNS service to apply the new list.
-        sudo pihole restartdns
+        if ! sudo pihole restartdns; then
+            echo "$ERR_RESTART_FAILED"
+            logger -t "$LOG_TAG" -p user.err "$ERR_RESTART_FAILED"
+            exit 1
+        fi
         echo "$MSG_DNS_RESTARTED"
         logger -t "$LOG_TAG" "$MSG_DNS_RESTARTED"
     else
